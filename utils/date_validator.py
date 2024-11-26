@@ -7,6 +7,7 @@ from datetime import datetime
 def format_date(date: str) -> str:
     formats = [
         "%d-%m-%Y",  # 25-11-2024
+        "%d.%m.%Y",  # 25.11.2024
         "%d.%m.%y",  # 25.11.24
         "%d:%m:%y",  # 25:11:24
         "%m-%d-%Y",  # 11-25-24
