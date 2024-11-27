@@ -4,12 +4,14 @@ from utils.date_validator import format_date
 class Note:
     def __init__(
             self,
+            username,
             title,
             content,
             status,
             created_date,
             issue_date,
     ):
+        self.username: str = username
         self.title: str = title
         self.content: str = content
         self.status: str = status
@@ -18,6 +20,7 @@ class Note:
 
     def to_dict(self):
         return {
+            "user_name": self.username,
             "title": self.title,
             "content": self.content,
             "status": self.status,
@@ -27,18 +30,26 @@ class Note:
 
     @staticmethod
     def from_dict(
-            self,
+            username,
             title,
             content,
             status,
             created_date,
             issue_date,
     ):
-        return Note(title=title, content=content, status=status, created_date=created_date, issue_date=issue_date)
+        return Note(
+            username=username,
+            title=title,
+            content=content,
+            status=status,
+            created_date=created_date,
+            issue_date=issue_date,
+        )
 
     def __str__(self):
         return (
-            f"Заметка: Заголовок: {self.title}, Статус: {self.status},"
-            f" Содердание: {self.content},"
+            f"Пользователь: {self.username}\n"
+            f"Заметка: Заголовок: {self.title}, Статус: {self.status}\n"
+            f"Содержание: {self.content}\n"
             f"Дата создания: {self.created_date}, Дата истечения: {self.issue_date}"
         )

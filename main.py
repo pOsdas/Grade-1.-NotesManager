@@ -5,8 +5,7 @@ from models.user import User
 def create_user() -> User:
     username = input("Введите имя пользователя: ")
 
-    created_user = User(username)
-    return created_user
+    return User(username)
 
 
 def create_note() -> Note:
@@ -16,18 +15,20 @@ def create_note() -> Note:
     created_date = input("Введите дату создания заметки (в формате ДД-ММ-ГГГГ): ")
     issue_date = input("Введите дату завершения заметки (в формате ДД-ММ-ГГГГ): ")
 
-    created_note = Note(title, content, status, created_date, issue_date)
-    return created_note
+    return Note(
+        username=user.username,
+        title=title,
+        content=content,
+        status=status,
+        created_date=created_date,
+        issue_date=issue_date,
+    )
 
 
 if __name__ == "__main__":
     user = create_user()
-    print(f"Имя пользователя: {user.username}")
+    print(f"Пользователь создан: {user}")
 
     note = create_note()
-    print(f"Заголовок: {note.title}")
-    print(f"Статус: {note.status}")
-    print(f"Содержание: {note.content}")
-    print(f"Дата создания: {note.created_date}")
-    print(f"Дата завершения: {note.issue_date}")
+    print(f"Заметка создана:\n{note}")
 
