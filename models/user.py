@@ -11,7 +11,7 @@ class User(Base):
     username = Column(String, unique=True, nullable=False)
 
     # one to many connection
-    notes = relationship('Note', back_populates='user', cascade='all, delete')
+    notes = relationship('Note', back_populates='user', cascade='all, delete-orphan')
 
-    def __str__(self):
+    def __repr__(self):
         return f"<User(id={self.id}, username={self.username})>"
