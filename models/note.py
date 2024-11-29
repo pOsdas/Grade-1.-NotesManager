@@ -1,55 +1,26 @@
-from utils.date_validator import format_date
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
+from sqlalchemy.orm import relationship
+from datetime import datetime
+
+from models.base import Base
 
 
-class Note:
-    def __init__(
-            self,
-            username,
-            title,
-            content,
-            status,
-            created_date,
-            issue_date,
-    ):
-        self.username: str = username
-        self.title: str = title
-        self.content: str = content
-        self.status: str = status
-        self.created_date: str = format_date(created_date)
-        self.issue_date: str = format_date(issue_date)
+class Note(Base):
+    __tablename__ = 'notes'
 
-    def to_dict(self):
-        return {
-            "user_name": self.username,
-            "title": self.title,
-            "content": self.content,
-            "status": self.status,
-            "created_date": self.created_date,
-            "issue_date": self.issue_date,
-        }
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    title = Column(String, nullable=False)
+    content = Column(String, nullable=False)
+    status = Column(String, nullable=False)
+    created_date = Column(DateTime, default=datetime.utcnow)
+    issued_date = Column(DateTime, nullable=True)
 
-    @staticmethod
-    def from_dict(
-            username,
-            title,
-            content,
-            status,
-            created_date,
-            issue_date,
-    ):
-        return Note(
-            username=username,
-            title=title,
-            content=content,
-            status=status,
-            created_date=created_date,
-            issue_date=issue_date,
-        )
+    # one to many connection
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    user = relationship('User', back_populates='notes')
 
     def __str__(self):
         return (
-            f"Пользователь: {self.username}\n"
-            f"Заметка: Заголовок: {self.title}, Статус: {self.status}\n"
-            f"Содержание: {self.content}\n"
-            f"Дата создания: {self.created_date}, Дата истечения: {self.issue_date}"
+            f"<Note(id={self.id}, title={self.title}>, status={self.status}, "
+            f"created_date={self.created_date}, issue_date={self.issue_date}, user_id={self.user_id})>"
         )
