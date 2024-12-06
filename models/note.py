@@ -1,5 +1,9 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import (
+    Column, Integer, String,
+    ForeignKey, DateTime, event,
+)
 from sqlalchemy.orm import relationship
+from datetime import datetime, timezone
 
 from models.base import Base
 
@@ -11,8 +15,8 @@ class Note(Base):
     title = Column(String, nullable=False)
     content = Column(String, nullable=False)
     status = Column(String, nullable=False)
-    created_date = Column(String, nullable=False)
-    issue_date = Column(String, nullable=False)
+    created_date = Column(DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)
+    issue_date = Column(DateTime, nullable=True)
 
     # one to many connection
     user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
