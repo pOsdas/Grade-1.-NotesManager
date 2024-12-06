@@ -1,29 +1,23 @@
 from datetime import datetime
-
-# created_date = "11-25-2024"
-# issue_date = "26-Nov-2024"
+from dateutil.parser import parse
 
 
-def format_date(date: str) -> str:
-    formats = [
-        "%d-%m-%Y",  # 25-11-2024
-        "%d.%m.%Y",  # 25.11.2024
-        "%d.%m.%y",  # 25.11.24
-        "%d:%m:%y",  # 25:11:24
-        "%m-%d-%Y",  # 11-25-24
-        "%d-%b-%Y",  # 25-Nov-2024
-    ]
-    for form in formats:
-        try:
-            correct_date = datetime.strptime(date, form)
-            return correct_date.strftime("%d-%m")
-        except ValueError:
-            continue
-    return "Некорректный формат даты"
+def format_date(date: str) -> datetime:
+    try:
+        correct_date = parse(date)
+        return correct_date
+    except ValueError:
+        raise ValueError(f"Не удалось обработать ввод даты: {date}")
 
 
-# temp_created_date = format_date(created_date)
-# temp_issue_date = format_date(issue_date)
+# transfer from str to datetime object
+# def handle_date(value):
+#     if isinstance(value, str) and value:
+#         try:
+#             return datetime.strptime(value, '%Y-%m-%d')
+#         except ValueError:
+#             raise ValueError(f"Некорректный формат даты: {value}")
+#     elif value is None or value == "":
+#         return None
 #
-# print(f"Дата создания: {temp_created_date}")
-# print(f"Дата задачи: {temp_issue_date}")
+#     return value
