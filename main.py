@@ -27,7 +27,6 @@ def create_note(
         title: str,
         content: str,
         status: str,
-        created_date: str,
         issue_date: str,
 ) -> Note | None:
 
@@ -40,7 +39,6 @@ def create_note(
         title=title,
         content=content,
         status=status,
-        created_date=format_date(created_date),
         issue_date=format_date(issue_date),
         user_id=current_user.id,
     )
@@ -62,9 +60,9 @@ def get_note(current_session, username: str) -> list:
             return []
 
         print(f"Заметки пользователя {username}:")
+        print("-" * 40)
         # Выводим каждую заметку
         for one_note in notes:
-            print("-" * 40)
             print(f"Заголовок: {one_note.title}")
             print(f"Содержание: {one_note.content}")
             print(f"Статус: {one_note.status}")
@@ -159,8 +157,8 @@ if __name__ == "__main__":
     print(f"Пользователь создан: \n{user}")
 
     note = create_note(
-        session, username="Johan", title="workout", content="legs day",
-        status="waiting", created_date="29-11-2024", issue_date="30-11-2024"
+        session, username="Johan", title="workout", content="chest day",
+        status="waiting", issue_date="2025-Jan-10",
     )
     print(f"Заметка создана:\n{note}")
 
@@ -168,10 +166,10 @@ if __name__ == "__main__":
     get_note(session, username="Johan")
 
     # Пример обновления статуса заметки
-    update_note_status(session, username="Johan", note_name="workout", new_status="done.")
+    # update_note_status(session, username="Johan", note_name="workout", new_status="done.")
 
     # Пример удаления
-    delete_note(session, "Johan", "workout")
+    # delete_note(session, "Johan", "workout")
 
     # Пример удаления пользователя и его заметок (если они есть)
-    delete_user(session, "Johan")
+    # delete_user(session, "Johan")
