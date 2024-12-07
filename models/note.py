@@ -17,6 +17,7 @@ class Note(Base):
     status = Column(String, nullable=False)
     created_date = Column(DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)
     issue_date = Column(DateTime, nullable=True)
+    comment = Column(String, nullable=True)
 
     # one to many connection
     user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
@@ -25,5 +26,6 @@ class Note(Base):
     def __repr__(self):
         return (
             f"<Note(id={self.id}, title={self.title}>, status={self.status}, "
-            f"created_date={self.created_date}, issue_date={self.issue_date}, user_id={self.user_id})>"
+            f"created_date={self.created_date}, issue_date={self.issue_date}, "
+            f"comment={self.comment}, user_id={self.user_id})>"
         )
