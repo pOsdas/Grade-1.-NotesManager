@@ -164,3 +164,6 @@ idea/
 
 # DataBase
 notes_manager.db
+
+# To do
+/TODO.MD
