@@ -23,8 +23,11 @@ def give_time(days: int, hours: int, minutes: int) -> str:
 def compare_dates(issue_date: datetime, status: str) -> str:
     current_time = datetime.now()
 
-    if status == "Отложено" or status == "Готово":
-        return ""
+    if status == "Отложено":
+        return "Отложено"
+    if status == "Готово":
+        return "Готово"
+
     if current_time < issue_date:
         remaining_days = issue_date - current_time
         days = remaining_days.days
