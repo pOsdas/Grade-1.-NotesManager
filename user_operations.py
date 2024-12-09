@@ -29,6 +29,23 @@ def current_user_info(current_session, username: str, note_name: str) -> Note | 
     return note_info
 
 
+def get_user_notes_titles(current_session, username: str) -> tuple[list[str], int]:
+    current_user = current_session.query(User).filter_by(username=username).first()
+    bool_var = 1
+
+    if not current_user:
+        bool_var = 0
+        return [], bool_var
+
+    notes = current_session.query(Note).filter_by(user_id=current_user.id).all()
+
+    if not notes:
+        bool_var = 0
+        return [], bool_var
+
+    return [note.title for note in notes], bool_var
+
+
 def delete_user(current_session, username: str) -> bool:
     current_user = current_session.query(User).filter(User.username == username).first()
 
