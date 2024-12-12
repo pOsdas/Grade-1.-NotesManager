@@ -1,3 +1,5 @@
+from sqlalchemy.exc import SQLAlchemyError
+
 from utils.date_validator import format_date, compare_dates
 from models.note import Note
 from models.user import User
@@ -90,6 +92,74 @@ def update_note_status(current_session, username: str, note_name: str, new_statu
 
     finally:
         current_session.close()
+
+
+def edit_note(current_session, username: str) -> None:
+    current_user = current_session.query(User).filter_by(username=username).first()
+    if not current_user:
+        print(f"Пользователь с именем {username} не найден.")
+        return
+
+    notes = current_session.query(Note).filter_by(user_id=current_user.id).all()
+    if not notes:
+        print(f"У пользователя {username} нет заметок.")
+        return
+
+    print(f"Заметки пользователя {username}:")
+    for index, note in enumerate(notes, start=1):
+        print(f"{index}. {note.title}")
+
+    try:
+        note_number = int(input("Введите номер заметки для редактирования: "))
+        if note_number < 1 or note_number > len(notes):
+            print("Некорректный номер заметки.")
+            return
+    except ValueError:
+        print("Введите корректное число.")
+        return
+
+    selected_note = notes[note_number - 1]
+    print(f"Вы выбрали заметку: {selected_note.title}")
+
+    fields = {
+        "title": "Заголовок",
+        "content": "Содержание",
+        "status": "Статус",
+        "issue_date": "Дата завершения (в формате ГГГГ-ММ-ДД)",
+    }
+
+    for field, description in fields.items():
+        current_value = getattr(selected_note, field)
+        new_value = input(f"{description} (текущее значение: {current_value}) (оставьте пустым для пропуска): ")
+        if new_value.strip():
+            setattr(selected_note, field, new_value.strip())
+
+    try:
+        current_session.commit()
+    except SQLAlchemyError as e:
+        current_session.rollback()
+        print(f"Ошибка при сохранении изменений: {e}")
+
+
+def search_notes(session, keyword: str = "", status: str = ""):
+    query = session.query(Note)
+
+    if keyword:
+        query = query.filter(
+            (Note.title.contains(keyword)) | (Note.content.contains(keyword))
+        )
+
+    if status:
+        query = query.filter(Note.status == status)
+
+    results = query.all()
+
+    if results:
+        print("Найденные заметки:")
+        for note in results:
+            print(f"Заголовок: {note.title}, Статус: {note.status}, Содержание: {note.content}")
+    else:
+        print("Нет заметок, соответствующих критериям поиска.")
 
 
 def delete_note(current_session, username: str, note_name: str) -> None:

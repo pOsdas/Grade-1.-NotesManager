@@ -1,6 +1,12 @@
 from database.db import init_db, SessionLocal
-from user_operations import create_user, current_user_info, delete_user, get_user_notes_titles
-from note_operations import create_note, get_note, update_note_status, delete_note
+from user_operations import (
+    create_user, current_user_info,
+    delete_user, get_user_notes_titles,
+)
+from note_operations import (
+    create_note, get_note, update_note_status,
+    delete_note, edit_note, search_notes,
+)
 from utils.date_validator import compare_dates
 
 import sys
@@ -15,17 +21,19 @@ def main_menu():
     print("2. Добавить заметку пользователю")
     print("3. Удалить заметку")
     print("4. Просмотреть заметку")
-    print("5. Обновить статус заметки")
-    print("6. Проверить статус дедлайна заметки")
-    print("7. Удалить пользователя и его заметки")
-    print("8. Завершить программу")
+    print("5. Обновить информацию заметки")
+    print("6. Обновить статус заметки")
+    print("7. Проверить статус дедлайна заметки")
+    print("8. Поиск по заметкам")
+    print("9. Удалить пользователя и его заметки")
+    print("10. Завершить программу")
 
 
 def select_action():
     try:
-        return int(input("Выберите действие (1-8): "))
+        return int(input("Выберите действие (1-10): "))
     except ValueError:
-        print("Пожалуйста, введите число от 1 до 8.")
+        print("Пожалуйста, введите число от 1 до 10.")
         return None
 
 
@@ -104,6 +112,10 @@ def main():
                 print(note)
 
         elif choice == 5:
+            username = input("Введите имя пользователя: ")
+            edit_note(session, username)
+
+        elif choice == 6:
             # Обновление статуса заметки
             username = input("Введите имя пользователя: ")
             titles, bool_varchar = get_user_notes_titles(session, username)
@@ -118,7 +130,7 @@ def main():
             else:
                 print(f"У пользователя {username} нет заметок!")
 
-        elif choice == 6:
+        elif choice == 7:
             # Проверка дедлайна
             username = input("Введите имя пользователя: ")
             titles, bool_varchar = get_user_notes_titles(session, username)
@@ -134,12 +146,17 @@ def main():
             else:
                 print(f"У пользователя {username} нет заметок!")
 
-        elif choice == 7:
+        elif choice == 8:
+            keyword = input("Введите ключевое слово для поиска (или оставьте пустым): ")
+            status = input("Введите статус для поиска (или оставьте пустым): ")
+            search_notes(session, keyword=keyword, status=status)
+
+        elif choice == 9:
             # Удаление пользователя и его заметок
             username = input("Введите имя пользователя: ")
             delete_user(session, username)
 
-        elif choice == 8:
+        elif choice == 10:
             # Завершение программы
             print("Программа завершена.")
             session.close()
