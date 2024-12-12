@@ -25,7 +25,7 @@ class Note(Base):
 
     def __repr__(self):
         return (
-            f"<Note(id={self.id}, title={self.title}>, status={self.status}, "
+            f"<Note(id={self.id}, title={self.title}>, content={self.content}, status={self.status}, "
             f"created_date={self.created_date}, issue_date={self.issue_date}, "
             f"comment={self.comment}, user_id={self.user_id})>"
         )
