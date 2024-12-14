@@ -8,6 +8,7 @@ from note_operations import (
     delete_note, edit_note, search_notes,
 )
 from utils.date_validator import compare_dates
+from utils.status import check_status
 
 import sys
 
@@ -43,24 +44,21 @@ def update_status_menu():
     print("2. Готово")
     print("3. Отложено")
     print("4. Просрочено")
-    status_choice = input("Введите номер статуса (1-4): ")
+    while True:
+        status_choice = input("Введите статус: ")
+        try:
+            check_status(status_choice)
+            break
+        except ValueError as e:
+            print(e)
 
-    status_mapping = {
-        "1": "В ожидании",
-        "2": "Готово",
-        "3": "Отложено",
-        "4": "Просрочено",
-    }
-
-    return status_mapping.get(status_choice, None)
+    return status_choice
 
 
 def main():
     # Инициализация базы данных и сессии
     init_db()
     session = SessionLocal()
-
-    allowed_statuses = {"В ожидании", "Готово", "Отложено", "Просрочено"}
 
     while True:
         main_menu()
@@ -78,11 +76,13 @@ def main():
             while True:
                 title = input("Введите название заметки: ")
                 content = input("Введите содержание заметки: ")
-                status = input("Введите статус заметки (например: В ожидании, Готово, Отложено, Просрочено): ")
-                if status not in allowed_statuses:
-                    while status not in allowed_statuses:
-                        print("Вы ввели недопустимый статус для заметки!")
-                        status = input("Введите статус заметки (например, В ожидании, Готово, Отложеноб Просрочено): ")
+                while True:
+                    status = input("Введите статус заметки: ")
+                    try:
+                        check_status(status)
+                        break
+                    except ValueError as e:
+                        print(e)
 
                 issue_date = input("Введите дату завершения заметки (в формате YYYY-MM-DD): ")
 

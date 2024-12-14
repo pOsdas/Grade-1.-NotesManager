@@ -1,6 +1,7 @@
 from sqlalchemy.exc import SQLAlchemyError
 
 from utils.date_validator import format_date, compare_dates
+from utils.status import check_status
 from models.note import Note
 from models.user import User
 from user_operations import current_user_info
@@ -19,10 +20,6 @@ def create_note(
     if not current_user:
         print(f"Пользователь '{username}' не найден.")
         return None
-
-    allowed_statuses = {"В ожидании", "Готово", "Отложено", "Просрочено"}
-    if status not in allowed_statuses:
-        raise ValueError(f"Недопустимый статус: {status}. Возможные значения: {', '.join(allowed_statuses)}")
 
     issue_date = format_date(issue_date)
     comment = compare_dates(issue_date, status)
@@ -122,17 +119,35 @@ def edit_note(current_session, username: str) -> None:
     print(f"Вы выбрали заметку: {selected_note.title}")
 
     fields = {
-        "title": "Заголовок",
-        "content": "Содержание",
-        "status": "Статус",
-        "issue_date": "Дата завершения (в формате ГГГГ-ММ-ДД)",
+        "title": "Заголовок:",
+        "content": "Содержание:",
+        "status": "Статус:",
+        "issue_date": "Дата завершения (в формате ГГГГ-ММ-ДД):",
     }
 
     for field, description in fields.items():
-        current_value = getattr(selected_note, field)
-        new_value = input(f"{description} (текущее значение: {current_value}) (оставьте пустым для пропуска): ")
-        if new_value.strip():
-            setattr(selected_note, field, new_value.strip())
+        # field status
+        if field == "status":
+            current_value = getattr(selected_note, field)
+            while True:
+                new_value = input(f"{description} (текущее значение: {current_value}) (оставьте пустым для пропуска): ")
+                if not new_value.strip():
+                    break
+                try:
+                    check_status(new_value)
+                    break
+                except ValueError as e:
+                    print(e)
+
+            if new_value.strip():
+                setattr(selected_note, field, new_value.strip())
+
+        # other fields
+        else:
+            current_value = getattr(selected_note, field)
+            new_value = input(f"{description} (текущее значение: {current_value}) (оставьте пустым для пропуска): ")
+            if new_value.strip():
+                setattr(selected_note, field, new_value.strip())
 
     try:
         current_session.commit()
