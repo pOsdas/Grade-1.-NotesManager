@@ -1,22 +1,22 @@
 import unittest
-
 from datetime import datetime
 
-from models.note import Note
-from note_operations import create_note, get_note, delete_note
+from note_operations import create_note, get_note
 from user_operations import create_user, delete_user
 from utils.date_validator import format_date
 from database.db import init_db, SessionLocal
 
 
-class TestNoteOperations(unittest.TestCase):
+class BaseTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        # Инициализация базы данных и сессии
+        # Инициализация базы данных
         init_db()
         cls.session = SessionLocal()
         cls.issue_date = datetime.strptime("2025-02-16", "%Y-%m-%d")
+        
 
+class TestNoteOperations(BaseTest):
     def test_create_note_without_user(self):
         # Тест на создание заметки без пользователя
         note = create_note(self.session, "test_user", "Test title", "something", "В ожидании", self.issue_date)
@@ -28,13 +28,7 @@ class TestNoteOperations(unittest.TestCase):
         self.assertEqual(fetched_note, [])
 
 
-class TestUserOperations(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        # Инициализация базы данных и сессии
-        init_db()
-        cls.session = SessionLocal()
-
+class TestUserOperations(BaseTest):
     def test_create_user(self):
         # Тест на создание пользователя
         user = create_user(self.session, "test_user")
@@ -47,7 +41,7 @@ class TestUserOperations(unittest.TestCase):
         self.assertTrue(result)
 
 
-class TestDateValidator(unittest.TestCase):
+class TestDateValidator(BaseTest):
     def test_format_date_valid(self):
         # Проверяем корректный формат
         result = format_date("2025/12/14")
