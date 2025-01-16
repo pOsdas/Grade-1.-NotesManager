@@ -1,6 +1,7 @@
 from sqlalchemy.exc import SQLAlchemyError
+from datetime import datetime
 
-from utils.date_validator import format_date, compare_dates
+from utils.date_validator import compare_dates, format_date
 from utils.status import check_status
 from models.note import Note
 from models.user import User
@@ -13,7 +14,7 @@ def create_note(
         title: str,
         content: str,
         status: str,
-        issue_date: str,
+        issue_date: datetime,
 ) -> Note | None:
 
     current_user = current_session.query(User).filter(User.username == username).first()
@@ -21,7 +22,6 @@ def create_note(
         print(f"Пользователь '{username}' не найден.")
         return None
 
-    issue_date = format_date(issue_date)
     comment = compare_dates(issue_date, status)
 
     current_note = Note(
@@ -126,7 +126,7 @@ def edit_note(current_session, username: str) -> None:
     }
 
     for field, description in fields.items():
-        # field status
+        # status field
         if field == "status":
             current_value = getattr(selected_note, field)
             while True:
@@ -135,6 +135,22 @@ def edit_note(current_session, username: str) -> None:
                     break
                 try:
                     check_status(new_value)
+                    break
+                except ValueError as e:
+                    print(e)
+
+            if new_value.strip():
+                setattr(selected_note, field, new_value.strip())
+
+        # issue_date field
+        if field == "issue_date":
+            current_value = getattr(selected_note, field)
+            while True:
+                new_value = input(f"{description} (текущее значение: {current_value}) (оставьте пустым для пропуска): ")
+                if not new_value.strip():
+                    break
+                try:
+                    format_date(new_value)
                     break
                 except ValueError as e:
                     print(e)
