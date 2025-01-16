@@ -7,7 +7,7 @@ from note_operations import (
     create_note, get_note, update_note_status,
     delete_note, edit_note, search_notes,
 )
-from utils.date_validator import compare_dates
+from utils.date_validator import compare_dates, format_date
 from utils.status import check_status
 
 import sys
@@ -64,14 +64,14 @@ def main():
         main_menu()
         choice = select_action()
 
+        # Добавление пользователя
         if choice == 1:
-            # Добавление пользователя
             username = input("Введите имя пользователя: ")
             user = create_user(session, username)
             print(f"Пользователь создан: {user}")
 
+        # Добавление заметки
         elif choice == 2:
-            # Добавление заметки
             username = input("Введите имя пользователя: ")
             while True:
                 title = input("Введите название заметки: ")
@@ -84,7 +84,13 @@ def main():
                     except ValueError as e:
                         print(e)
 
-                issue_date = input("Введите дату завершения заметки (в формате YYYY-MM-DD): ")
+                while True:
+                    issue_date = input("Введите дату завершения заметки (в формате YYYY-MM-DD): ")
+                    try:
+                        issue_date = format_date(issue_date)
+                        break
+                    except ValueError as e:
+                        print(e)
 
                 note = create_note(session, username, title, content, status, issue_date)
                 print(f"Заметка создана: {note}")
@@ -93,8 +99,8 @@ def main():
                 if another_note != "да":
                     break
 
+        # Удаление заметки
         elif choice == 3:
-            # Удаление заметки
             username = input("Введите имя пользователя: ")
             titles, bool_varchar = get_user_notes_titles(session, username)
             if bool_varchar:
@@ -104,19 +110,20 @@ def main():
             else:
                 print(f"У пользователя {username} нет заметок!")
 
+        # Просмотр заметки
         elif choice == 4:
-            # Просмотр заметки
             username = input("Введите имя пользователя: ")
             note = get_note(session, username)
             if note:
                 print(note)
 
+        # Обновить информацию заметки
         elif choice == 5:
             username = input("Введите имя пользователя: ")
             edit_note(session, username)
 
+        # Обновление статуса заметки
         elif choice == 6:
-            # Обновление статуса заметки
             username = input("Введите имя пользователя: ")
             titles, bool_varchar = get_user_notes_titles(session, username)
             if bool_varchar:
@@ -130,8 +137,8 @@ def main():
             else:
                 print(f"У пользователя {username} нет заметок!")
 
+        # Проверка дедлайна
         elif choice == 7:
-            # Проверка дедлайна
             username = input("Введите имя пользователя: ")
             titles, bool_varchar = get_user_notes_titles(session, username)
             if bool_varchar:
@@ -146,18 +153,19 @@ def main():
             else:
                 print(f"У пользователя {username} нет заметок!")
 
+        # Поиск по заметкам
         elif choice == 8:
             keyword = input("Введите ключевое слово для поиска (или оставьте пустым): ")
             status = input("Введите статус для поиска (или оставьте пустым): ")
             search_notes(session, keyword=keyword, status=status)
 
+        # Удаление пользователя и его заметок
         elif choice == 9:
-            # Удаление пользователя и его заметок
             username = input("Введите имя пользователя: ")
             delete_user(session, username)
 
+        # Завершение программы
         elif choice == 10:
-            # Завершение программы
             print("Программа завершена.")
             session.close()
             sys.exit()
