@@ -1,15 +1,30 @@
 from datetime import datetime
-from dateutil.parser import parse
+import re
 
 from utils.declension_of_words import get_word_form
 
 
-def format_date(date: str) -> datetime:
-    try:
-        correct_date = parse(date)
-        return correct_date
-    except ValueError:
-        raise ValueError(f"Не удалось обработать ввод даты: {date}")
+def format_date(date_str: str) -> datetime:
+    formats = [
+        (r"^\d{4}-\d{2}-\d{2}$", "%Y-%m-%d"),  # 2024-12-14
+        (r"^\d{4}:\d{2}:\d{2}$", "%Y:%m:%d"),  # 2024:12:14
+        (r"^\d{4}/\d{2}/\d{2}$", "%Y/%m/%d"),  # 2024/12/14
+        (r"^\d{4}\.\d{2}\.\d{2}$", "%Y.%m.%d"),  # 2024.12.14
+        (r"^\d{2}-\d{2}-\d{4}$", "%d-%m-%Y"),  # 14-12-2024
+        (r"^\d{2}/\d{2}/\d{4}$", "%d/%m/%Y"),  # 14/12/2024
+        (r"^\d{2}\.\d{2}\.\d{4}$", "%d.%m.%Y"),  # 14.12.2024
+        (r"^\d{2}\:\d{2}\:\d{4}$", "%d:%m:%Y"),  # 14:12:2024
+    ]
+
+    for pattern, date_format in formats:
+        if re.match(pattern, date_str):
+            try:
+                parsed_date = datetime.strptime(date_str, date_format)
+                return parsed_date
+            except ValueError:
+                raise ValueError(f"Некорректный формат даты: {date_str}")
+
+    raise ValueError(f"Формат даты не поддерживается: {date_str}")
 
 
 def give_time(days: int, hours: int, minutes: int) -> str:
