@@ -47,6 +47,7 @@ def get_user_notes_titles(current_session, username: str) -> tuple[list[str], in
 
 
 def delete_user(current_session, username: str) -> bool:
+    # Удаление пользователя и его заметок
     current_user = current_session.query(User).filter(User.username == username).first()
 
     if not current_user:
@@ -58,6 +59,7 @@ def delete_user(current_session, username: str) -> bool:
         current_session.commit()
         print(f"Пользователь '{username}' Был успешно удален.")
         return True
+
     except IntegrityError as e:
         current_session.rollback()
         print(f"Ошибка при удалении '{username}': {e}")
