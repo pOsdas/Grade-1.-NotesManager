@@ -23,9 +23,9 @@ def format_date(date_str: str) -> datetime:
                 parsed_date = datetime.strptime(date_str, date_format)
                 return parsed_date
             except ValueError:
-                raise ValueError(f"Некорректный формат даты: {date_str}")
+                raise ValueError(f"Некорректный формат даты: {date_str} ⚠️")
 
-    raise ValueError(f"Формат даты не поддерживается: {date_str}")
+    raise ValueError(f"Формат даты не поддерживается: {date_str} ⚠️")
 
 
 def give_time(days: int, hours: int, minutes: int) -> str:

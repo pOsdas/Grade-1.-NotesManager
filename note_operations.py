@@ -20,7 +20,7 @@ def create_note(
 
     current_user = current_session.query(User).filter(User.username == username).first()
     if not current_user:
-        print(f"Пользователь '{username}' не найден.")
+        print(f"Пользователь '{username}' не найден. ⚠️")
         return None
 
     comment = compare_dates(issue_date, status)
@@ -36,7 +36,7 @@ def create_note(
 
     current_session.add(current_note)
     current_session.commit()
-    print(f"Заметка '{title}' добавлена для пользователя '{username}'.")
+    print(f"Заметка '{title}' добавлена для пользователя '{username}'. ✅")
     return current_note
 
 
@@ -44,11 +44,11 @@ def get_note(current_session, username: str) -> list:
     try:
         current_user = current_session.query(User).filter_by(username=username).first()
         if not current_user:
-            print(f"Пользователь с именем {username} не найден.")
+            print(f"Пользователь с именем {username} не найден. ⚠️")
             return []
         notes = current_session.query(Note).filter_by(user_id=current_user.id).all()
         if not notes:
-            print(f"У пользователя {username} нет заметок.")
+            print(f"У пользователя {username} нет заметок. ⚠️")
             return []
 
         print(f"Заметки пользователя {username}:")
@@ -66,7 +66,7 @@ def get_note(current_session, username: str) -> list:
         return notes
 
     except Exception as e:
-        print(f"Ошибка при получении заметок: {e}")
+        print(f"Ошибка при получении заметок: {e} ❌")
         return []
 
     finally:
@@ -78,15 +78,15 @@ def update_note_status(current_session, username: str, note_name: str, new_statu
         current_note = current_user_info(current_session, username, note_name)
 
         if not current_note:
-            print(f"Заметка с названием {note_name} не найдена у пользователя {username}.")
+            print(f"Заметка с названием {note_name} не найдена у пользователя {username}. ⚠️")
             return
 
         current_note.status = new_status
         current_session.commit()
-        print(f"Статус заметки '{note_name}' обновлен на '{display_note_status(new_status)}'.")
+        print(f"Статус заметки '{note_name}' обновлен на '{display_note_status(new_status)}'. ✅")
 
     except Exception as e:
-        print(f"Ошибка при обновлении статуса заметки: {e}")
+        print(f"Ошибка при обновлении статуса заметки: {e} ❌")
 
     finally:
         current_session.close()
@@ -95,12 +95,12 @@ def update_note_status(current_session, username: str, note_name: str, new_statu
 def edit_note(current_session, username: str) -> None:
     current_user = current_session.query(User).filter_by(username=username).first()
     if not current_user:
-        print(f"Пользователь с именем {username} не найден.")
+        print(f"Пользователь с именем {username} не найден. ⚠️")
         return
 
     notes = current_session.query(Note).filter_by(user_id=current_user.id).all()
     if not notes:
-        print(f"У пользователя {username} нет заметок.")
+        print(f"У пользователя {username} нет заметок. ⚠️")
         return
 
     print(f"Заметки пользователя {username}:")
@@ -110,7 +110,7 @@ def edit_note(current_session, username: str) -> None:
     try:
         note_number = int(input("Введите номер заметки для редактирования: "))
         if note_number < 1 or note_number > len(notes):
-            print("Некорректный номер заметки.")
+            print("Некорректный номер заметки. ⚠️")
             return
     except ValueError:
         print("Введите корректное число.")
@@ -139,7 +139,7 @@ def edit_note(current_session, username: str) -> None:
                     check_status(new_value)
                     break
                 except ValueError as e:
-                    print(e)
+                    print(e, "❌")
 
             if new_value.strip():
                 setattr(selected_note, field, new_value.strip())
@@ -155,7 +155,7 @@ def edit_note(current_session, username: str) -> None:
                     format_date(new_value)
                     break
                 except ValueError as e:
-                    print(e)
+                    print(e, "❌")
 
             if new_value.strip():
                 setattr(selected_note, field, new_value.strip())
@@ -169,10 +169,10 @@ def edit_note(current_session, username: str) -> None:
 
     try:
         current_session.commit()
-        print(Fore.GREEN + "Успех")
+        print(Fore.GREEN + "Успех" + "✅")
     except SQLAlchemyError as e:
         current_session.rollback()
-        print(f"Ошибка при сохранении изменений: {e}")
+        print(f"Ошибка при сохранении изменений: {e} ❌")
 
 
 def search_notes(session, keyword: str = "", status: str = ""):
@@ -193,7 +193,7 @@ def search_notes(session, keyword: str = "", status: str = ""):
         for note in results:
             print(f"Заголовок: {note.title}, Статус: {display_note_status(note.status)}, Содержание: {note.content}")
     else:
-        print("Нет заметок, соответствующих критериям поиска.")
+        print("Нет заметок, соответствующих критериям поиска. ⚠️")
 
 
 def delete_note(current_session, username: str, note_name: str) -> None:
@@ -201,15 +201,15 @@ def delete_note(current_session, username: str, note_name: str) -> None:
         current_note = current_user_info(current_session, username, note_name)
 
         if not current_note:
-            print(f"Заметка с названием {note_name} не найдена у пользователя {username}.")
+            print(f"Заметка с названием {note_name} не найдена у пользователя {username}. ⚠️")
             return
 
         current_session.delete(current_note)
         current_session.commit()
-        print(f"Заметка '{note_name}' удалена у пользователя {username}.")
+        print(f"Заметка '{note_name}' удалена у пользователя {username}. ✅")
 
     except Exception as e:
-        print(f"Ошибка при удалении заметки: {e}")
+        print(f"Ошибка при удалении заметки: {e} ❌")
 
     finally:
         current_session.close()

@@ -38,7 +38,7 @@ def select_action():
     try:
         return int(input("Выберите действие (1-10): "))
     except ValueError:
-        print("Пожалуйста, введите число от 1 до 10.")
+        print("Пожалуйста, введите число от 1 до 10. ⚠️")
         return None
 
 
@@ -54,7 +54,7 @@ def update_status_menu():
             check_status(status_choice)
             break
         except ValueError as e:
-            print(e)
+            print(e, "❌")
 
     return status_choice
 
@@ -72,7 +72,7 @@ def main():
         if choice == 1:
             username = input("Введите имя пользователя: ")
             user = create_user(session, username)
-            print(f"Пользователь создан: {user}")
+            print(f"Пользователь создан: {user} ✅")
 
         # Добавление заметки
         elif choice == 2:
@@ -86,7 +86,7 @@ def main():
                         check_status(status)
                         break
                     except ValueError as e:
-                        print(e)
+                        print(e, "❌")
 
                 while True:
                     issue_date = input("Введите дату завершения заметки (в формате YYYY-MM-DD): ")
@@ -94,10 +94,10 @@ def main():
                         issue_date = format_date(issue_date)
                         break
                     except ValueError as e:
-                        print(e)
+                        print(e, "❌")
 
                 note = create_note(session, username, title, content, status, issue_date)
-                print(f"Заметка создана: {note}")
+                print(f"Заметка создана: {note} ✅")
 
                 another_note = input("Хотите создать еще одну заметку? (да/нет): ").strip().lower()
                 if another_note != "да":
@@ -112,7 +112,7 @@ def main():
                 note_name = input("Введите название заметки: ")
                 delete_note(session, username, note_name)
             else:
-                print(f"У пользователя {username} нет заметок!")
+                print(f"У пользователя {username} нет заметок! ⚠️")
 
         # Просмотр заметки
         elif choice == 4:
@@ -137,9 +137,9 @@ def main():
                 if new_status:
                     update_note_status(session, username, note_name, new_status)
                 else:
-                    print("Неверный выбор статуса.")
+                    print("Неверный выбор статуса. ⚠️")
             else:
-                print(f"У пользователя {username} нет заметок!")
+                print(f"У пользователя {username} нет заметок! ⚠️")
 
         # Проверка дедлайна
         elif choice == 7:
@@ -153,9 +153,9 @@ def main():
                     comment = compare_dates(note.issue_date, note.status)
                     print(comment)
                 else:
-                    print("Заметка не найдена.")
+                    print("Заметка не найдена. ⚠️")
             else:
-                print(f"У пользователя {username} нет заметок!")
+                print(f"У пользователя {username} нет заметок! ⚠️")
 
         # Поиск по заметкам
         elif choice == 8:
@@ -175,4 +175,4 @@ def main():
             sys.exit()
 
         else:
-            print("Неверный выбор. Пожалуйста, выберите действие из меню.")
+            print("Неверный выбор. Пожалуйста, выберите действие из меню. ⚠️")

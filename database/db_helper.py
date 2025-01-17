@@ -24,7 +24,7 @@ def inspect_notes_table():
         for row in result:
             print(row)
     except Exception as e:
-        print(f"Ошибка при проверке структуры таблицы: {e}")
+        print(f"Ошибка при проверке структуры таблицы: {e} ❌")
     finally:
         session.close()
 
@@ -38,9 +38,9 @@ def fetch_all_notes_raw():
             for row in result:
                 print(row)
         else:
-            print("Таблица notes пуста.")
+            print("Таблица notes пуста. ⚠️")
     except Exception as e:
-        print(f"Ошибка при выполнении запроса: {e}")
+        print(f"Ошибка при выполнении запроса: {e} ❌")
     finally:
         session.close()
 
