@@ -40,7 +40,7 @@ def create_note(
     return current_note
 
 
-def get_note(current_session, username: str) -> list:
+def get_notes(current_session, username: str) -> list:
     try:
         current_user = current_session.query(User).filter_by(username=username).first()
         if not current_user:
@@ -137,12 +137,10 @@ def edit_note(current_session, username: str) -> None:
                     break
                 try:
                     check_status(new_value)
+                    setattr(selected_note, field, new_value.strip())
                     break
                 except ValueError as e:
                     print(e, "❌")
-
-            if new_value.strip():
-                setattr(selected_note, field, new_value.strip())
 
         # issue_date field
         elif field == "issue_date":
@@ -152,13 +150,11 @@ def edit_note(current_session, username: str) -> None:
                 if not new_value.strip():
                     break
                 try:
-                    format_date(new_value)
+                    parsed_date = format_date(new_value)
+                    setattr(selected_note, field, parsed_date)
                     break
                 except ValueError as e:
                     print(e, "❌")
-
-            if new_value.strip():
-                setattr(selected_note, field, new_value.strip())
 
         # other fields
         else:
@@ -194,6 +190,31 @@ def search_notes(session, keyword: str = "", status: str = ""):
             print(f"Заголовок: {note.title}, Статус: {display_note_status(note.status)}, Содержание: {note.content}")
     else:
         print("Нет заметок, соответствующих критериям поиска. ⚠️")
+
+
+def filter_notes(current_session, filter_type: int, filter_value: str) -> list:
+    """
+    Фильтрует заметки пользователя из базы данных.
+    """
+    query = current_session.query(Note)
+
+    # По ключевому слову
+    if filter_type == 1:
+        return query.filter(Note.title.ilike(f"%{filter_value}%") | Note.content.ilike(f"%{filter_value}%")).all()
+    # По статусу
+    elif filter_type == 2:
+        return query.filter(Note.status.ilike(filter_value)).all()
+    # По дате
+    elif filter_type == 3:
+        try:
+            filter_date = datetime.strptime(filter_value, "%Y-%m-%d")
+            return query.filter(Note.issue_date == filter_date).all()
+        except ValueError:
+            print("Ошибка: Некорректный формат даты. ⚠️")
+            return []
+    else:
+        print("Ошибка: Некорректный тип фильтра. ⚠️")
+        return []
 
 
 def delete_note(current_session, username: str, note_name: str) -> None:
