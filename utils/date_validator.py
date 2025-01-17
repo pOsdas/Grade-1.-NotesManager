@@ -2,6 +2,7 @@ from datetime import datetime
 import re
 
 from utils.declension_of_words import get_word_form
+from utils.status import display_note_status
 
 
 def format_date(date_str: str) -> datetime:
@@ -39,9 +40,9 @@ def compare_dates(issue_date: datetime, status: str) -> str:
     current_time = datetime.now()
 
     if status == "Отложено":
-        return "Отложено"
+        return f"{display_note_status('Отложено')}"
     if status == "Готово":
-        return "Готово"
+        return f"{display_note_status('Готово')}"
 
     if current_time < issue_date:
         remaining_days = issue_date - current_time

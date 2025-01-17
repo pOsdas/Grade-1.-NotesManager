@@ -1,8 +1,9 @@
 from sqlalchemy.exc import SQLAlchemyError
 from datetime import datetime
+from colorama import Fore
 
 from utils.date_validator import compare_dates, format_date
-from utils.status import check_status
+from utils.status import check_status, display_note_status
 from models.note import Note
 from models.user import User
 from user_operations import current_user_info
@@ -56,7 +57,7 @@ def get_note(current_session, username: str) -> list:
         for one_note in notes:
             print(f"Заголовок: {one_note.title}")
             print(f"Содержание: {one_note.content}")
-            print(f"Статус: {one_note.status}")
+            print(f"Статус: {display_note_status(one_note.status)}")
             print(f"Дата создания: {one_note.created_date}")
             print(f"Дата завершения: {one_note.issue_date}")
             print(f"Комментарий: {one_note.comment}")
@@ -82,7 +83,7 @@ def update_note_status(current_session, username: str, note_name: str, new_statu
 
         current_note.status = new_status
         current_session.commit()
-        print(f"Статус заметки '{note_name}' обновлен на '{new_status}'.")
+        print(f"Статус заметки '{note_name}' обновлен на '{display_note_status(new_status)}'.")
 
     except Exception as e:
         print(f"Ошибка при обновлении статуса заметки: {e}")
@@ -130,7 +131,8 @@ def edit_note(current_session, username: str) -> None:
         if field == "status":
             current_value = getattr(selected_note, field)
             while True:
-                new_value = input(f"{description} (текущее значение: {current_value}) (оставьте пустым для пропуска): ")
+                new_value = input(f"{description} (текущее значение: {display_note_status(current_value)}) "
+                                  f"(оставьте пустым для пропуска): ")
                 if not new_value.strip():
                     break
                 try:
@@ -143,7 +145,7 @@ def edit_note(current_session, username: str) -> None:
                 setattr(selected_note, field, new_value.strip())
 
         # issue_date field
-        if field == "issue_date":
+        elif field == "issue_date":
             current_value = getattr(selected_note, field)
             while True:
                 new_value = input(f"{description} (текущее значение: {current_value}) (оставьте пустым для пропуска): ")
@@ -167,6 +169,7 @@ def edit_note(current_session, username: str) -> None:
 
     try:
         current_session.commit()
+        print(Fore.GREEN + "Успех")
     except SQLAlchemyError as e:
         current_session.rollback()
         print(f"Ошибка при сохранении изменений: {e}")
@@ -188,7 +191,7 @@ def search_notes(session, keyword: str = "", status: str = ""):
     if results:
         print("Найденные заметки:")
         for note in results:
-            print(f"Заголовок: {note.title}, Статус: {note.status}, Содержание: {note.content}")
+            print(f"Заголовок: {note.title}, Статус: {display_note_status(note.status)}, Содержание: {note.content}")
     else:
         print("Нет заметок, соответствующих критериям поиска.")
 

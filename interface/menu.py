@@ -11,6 +11,10 @@ from utils.date_validator import compare_dates, format_date
 from utils.status import check_status
 
 import sys
+from colorama import Fore, Style, init
+
+# инициализация
+init(autoreset=True)
 
 
 def main_menu():
@@ -40,10 +44,10 @@ def select_action():
 
 def update_status_menu():
     print("\n=== Возможные статусы заметки ===")
-    print("1. В ожидании")
-    print("2. Готово")
-    print("3. Отложено")
-    print("4. Просрочено")
+    print("1. " + Fore.YELLOW + "В ожидании")
+    print("2. " + Fore.GREEN + "Готово")
+    print("3. " + Fore.LIGHTBLUE_EX + "Отложено")
+    print("4. " + Fore.RED + "Просрочено")
     while True:
         status_choice = input("Введите статус: ")
         try:
@@ -113,9 +117,9 @@ def main():
         # Просмотр заметки
         elif choice == 4:
             username = input("Введите имя пользователя: ")
-            note = get_note(session, username)
-            if note:
-                print(note)
+            notes = get_note(session, username)
+            if notes:
+                print(notes)
 
         # Обновить информацию заметки
         elif choice == 5:
