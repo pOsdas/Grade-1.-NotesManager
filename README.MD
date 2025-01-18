@@ -19,7 +19,7 @@ NotesManager — это приложение для управления зам�
 * greenlet
 
 ## Running
-
+Используйте `Dockerfile`, или:
 1. Скопируйте репозиторий
 ```sh
 git clone https://github.com/pOsdas/Grade-1.-NotesManager.git
