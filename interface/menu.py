@@ -5,7 +5,7 @@ from user_operations import (
 )
 from note_operations import (
     create_note, get_notes, update_note_status,
-    delete_note, edit_note, search_notes,
+    delete_note, edit_note, search_notes, display_notes_paginated
 )
 from utils.date_validator import compare_dates, format_date
 from utils.status import check_status
@@ -26,21 +26,22 @@ def main_menu():
     print("1. Добавить пользователя")
     print("2. Добавить заметку пользователю")
     print("3. Удалить заметку")
-    print("4. Просмотреть заметки")
-    print("5. Фильтровать заметки")
-    print("6. Обновить информацию заметки")
-    print("7. Обновить статус заметки")
-    print("8. Проверить статус дедлайна заметки")
-    print("9. Поиск по заметкам")
-    print("10. Удалить пользователя и его заметки")
-    print("11. Завершить программу")
+    print("4. Просмотреть заметки для пользователя")
+    print("5. Просмотреть все заметки по страницам")
+    print("6. Фильтровать заметки")
+    print("7. Обновить информацию заметки")
+    print("8. Обновить статус заметки")
+    print("9. Проверить статус дедлайна заметки")
+    print("10. Поиск по заметкам")
+    print("11. Удалить пользователя и его заметки")
+    print("12. Завершить программу")
 
 
 def select_action():
     try:
-        return int(input("Выберите действие (1-11): "))
+        return int(input("Выберите действие (1-12): "))
     except ValueError:
-        print("Пожалуйста, введите число от 1 до 11. ⚠️")
+        print("Пожалуйста, введите число от 1 до 12. ⚠️")
         return None
 
 
@@ -123,17 +124,21 @@ def main():
             if notes:
                 print(notes)
 
-        # Фильтровать заметки
+        # Просмотр заметок по страницам
         elif choice == 5:
+            display_notes_paginated(session)
+
+        # Фильтровать заметки
+        elif choice == 6:
             filters_menu(session)
 
         # Обновить информацию заметки
-        elif choice == 6:
+        elif choice == 7:
             username = input("Введите имя пользователя: ")
             edit_note(session, username)
 
         # Обновление статуса заметки
-        elif choice == 7:
+        elif choice == 8:
             username = input("Введите имя пользователя: ")
             titles, bool_varchar = get_user_notes_titles(session, username)
             if bool_varchar:
@@ -148,7 +153,7 @@ def main():
                 print(f"У пользователя {username} нет заметок! ⚠️")
 
         # Проверка дедлайна
-        elif choice == 8:
+        elif choice == 9:
             username = input("Введите имя пользователя: ")
             titles, bool_varchar = get_user_notes_titles(session, username)
             if bool_varchar:
@@ -164,18 +169,18 @@ def main():
                 print(f"У пользователя {username} нет заметок! ⚠️")
 
         # Поиск по заметкам
-        elif choice == 9:
+        elif choice == 10:
             keyword = input("Введите ключевое слово для поиска (или оставьте пустым): ")
             status = input("Введите статус для поиска (или оставьте пустым): ")
             search_notes(session, keyword=keyword, status=status)
 
         # Удаление пользователя и его заметок
-        elif choice == 10:
+        elif choice == 11:
             username = input("Введите имя пользователя: ")
             delete_user(session, username)
 
         # Завершение программы
-        elif choice == 11:
+        elif choice == 12:
             print("Программа завершена.")
             session.close()
             sys.exit()
