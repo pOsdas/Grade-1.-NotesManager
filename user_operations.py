@@ -7,6 +7,9 @@ def create_user(
         current_session,
         username: str,
 ) -> None | User:
+    """
+    Создание пользователя.
+    """
     new_user = User(username=username)
     try:
         current_session.add(new_user)
@@ -19,6 +22,9 @@ def create_user(
 
 
 def current_user_info(current_session, username: str, note_name: str) -> Note | None:
+    """
+    Поиск заметки текущего пользователя.
+    """
     current_user = current_session.query(User).filter_by(username=username).first()
 
     if not current_user:
@@ -30,6 +36,9 @@ def current_user_info(current_session, username: str, note_name: str) -> Note | 
 
 
 def get_user_notes_titles(current_session, username: str) -> tuple[list[str], int]:
+    """
+    Заголовки всех заметок пользователя.
+    """
     current_user = current_session.query(User).filter_by(username=username).first()
     bool_var = 1
 
@@ -47,6 +56,9 @@ def get_user_notes_titles(current_session, username: str) -> tuple[list[str], in
 
 
 def delete_user(current_session, username: str) -> bool:
+    """
+    Удаление пользователя.
+    """
     # Удаление пользователя и его заметок
     current_user = current_session.query(User).filter(User.username == username).first()
 

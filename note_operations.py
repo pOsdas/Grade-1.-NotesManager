@@ -17,6 +17,9 @@ def create_note(
         status: str,
         issue_date: datetime,
 ) -> Note | None:
+    """
+    Создание заметки.
+    """
 
     current_user = current_session.query(User).filter(User.username == username).first()
     if not current_user:
@@ -41,6 +44,9 @@ def create_note(
 
 
 def get_notes(current_session, username: str) -> list:
+    """
+    Вывод всех заметок для пользователя.
+    """
     try:
         current_user = current_session.query(User).filter_by(username=username).first()
         if not current_user:
@@ -74,6 +80,9 @@ def get_notes(current_session, username: str) -> list:
 
 
 def update_note_status(current_session, username: str, note_name: str, new_status: str) -> None:
+    """
+    Изменение статуса заметки.
+    """
     try:
         current_note = current_user_info(current_session, username, note_name)
 
@@ -93,6 +102,9 @@ def update_note_status(current_session, username: str, note_name: str, new_statu
 
 
 def edit_note(current_session, username: str) -> None:
+    """
+    Изменение любого поля заметки.
+    """
     current_user = current_session.query(User).filter_by(username=username).first()
     if not current_user:
         print(f"Пользователь с именем {username} не найден. ⚠️")
@@ -172,6 +184,9 @@ def edit_note(current_session, username: str) -> None:
 
 
 def search_notes(session, keyword: str = "", status: str = ""):
+    """
+    Производит поиск заметок в базе данных.
+    """
     query = session.query(Note)
 
     if keyword:
@@ -218,6 +233,9 @@ def filter_notes(current_session, filter_type: int, filter_value: str) -> list:
 
 
 def delete_note(current_session, username: str, note_name: str) -> None:
+    """
+    Удаляет заметку из базы данных.
+    """
     try:
         current_note = current_user_info(current_session, username, note_name)
 

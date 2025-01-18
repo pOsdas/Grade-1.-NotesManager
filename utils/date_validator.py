@@ -6,6 +6,9 @@ from utils.status import display_note_status
 
 
 def format_date(date_str: str) -> datetime:
+    """
+    Валидация даты.
+    """
     formats = [
         (r"^\d{4}-\d{2}-\d{2}$", "%Y-%m-%d"),  # 2024-12-14
         (r"^\d{4}:\d{2}:\d{2}$", "%Y:%m:%d"),  # 2024:12:14
@@ -29,6 +32,9 @@ def format_date(date_str: str) -> datetime:
 
 
 def give_time(days: int, hours: int, minutes: int) -> str:
+    """
+    Время в правильном падеже.
+    """
     return (
         f"{days} {get_word_form(days, ('день', 'дня', 'дней'))}, "
         f"{hours} {get_word_form(hours, ('час', 'часа', 'часов'))}, "
@@ -37,6 +43,9 @@ def give_time(days: int, hours: int, minutes: int) -> str:
 
 
 def compare_dates(issue_date: datetime, status: str) -> str:
+    """
+    Заполнение ячейки comment для заметки.
+    """
     current_time = datetime.now()
 
     if status == "Отложено":

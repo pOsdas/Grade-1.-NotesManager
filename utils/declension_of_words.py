@@ -1,5 +1,7 @@
 def get_word_form(number: int, forms: tuple) -> str:
-    """Возвращает слово в нужном падеже в зависимости от числа."""
+    """
+    Возвращает слово в нужном падеже в зависимости от числа.
+    """
     number = abs(number) % 100
     if 11 <= number <= 19:
         return forms[2]
