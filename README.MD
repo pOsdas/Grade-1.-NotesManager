@@ -5,6 +5,7 @@ NotesManager — это приложение для управления зам�
 ---
 ## Содержание
 - [Libraries](#Libraries)
+- [Project structure](#Project-structure)
 - [Running](#Running)
   - [For windows](#Windows)
   - [For Linux](#Linux)
