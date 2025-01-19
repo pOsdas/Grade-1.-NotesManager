@@ -151,6 +151,43 @@ def update_note_status(current_session, username: str, note_name: str, new_statu
         current_session.close()
 
 
+def check_reminders(current_session) -> None:
+    """
+    Проверяет все заметки на наличие истёкших дедлайнов и выводит напоминания.
+    """
+    try:
+        # Загрузка всех заметок
+        notes = current_session.query(Note).all()
+        if not notes:
+            print("Нет заметок в базе данных. ⚠️")
+            return
+
+        reminders = []
+        current_date = datetime.now()
+
+        # Проверка дедлайнов
+        for note in notes:
+            issue_date = note.issue_date
+            if issue_date < current_date:
+                reminders.append(note)
+
+        # Вывод напоминаний
+        if reminders:
+            print("\n=== Напоминания ===\n")
+            for note in reminders:
+                print(f"Заметка: {note.title}")
+                print(f"Дедлайн: {note.issue_date} (истёк)\n")
+        else:
+            print("\n=== Напоминания ===\n")
+            print("Напоминание: Нет истёкших дедлайнов. ✅")
+
+    except Exception as e:
+        print(f"Ошибка при проверке напоминаний: {e} ❌")
+
+    finally:
+        current_session.close()
+
+
 def edit_note(current_session, username: str) -> None:
     """
     Изменение любого поля заметки.
