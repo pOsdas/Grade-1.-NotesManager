@@ -335,7 +335,7 @@ def export_notes_to_file(current_session, export_format: str) -> bool | None:
     # В текстовый файл
     if export_format.lower() == "txt":
         try:
-            file_path = "notes_export.txt"
+            file_path = "../exports/notes_export.txt"
             with open(file_path, "w", encoding="utf-8") as file:
                 for note in notes:
                     file.write(f"Заголовок: {note.title}\n")
@@ -352,7 +352,7 @@ def export_notes_to_file(current_session, export_format: str) -> bool | None:
 
     # В pdf
     elif export_format.lower() == "pdf":
-        file_path = "notes_export.pdf"
+        file_path = "../exports/notes_export.pdf"
         try:
             pdf = canvas.Canvas(file_path, pagesize=A4)
             width, height = A4
