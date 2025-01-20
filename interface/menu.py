@@ -6,7 +6,7 @@ from user_operations import (
 from note_operations import (
     create_note, get_notes, update_note_status,
     delete_note, edit_note, search_notes, display_notes_paginated,
-    check_reminders,
+    check_reminders, export_notes_to_file,
 )
 from utils.date_validator import compare_dates, format_date
 from utils.status import check_status
@@ -35,15 +35,16 @@ def main_menu():
     print("9. Обновить статус заметки")
     print("10. Проверить статус дедлайна заметки")
     print("11. Поиск по заметкам")
-    print("12. Удалить пользователя и его заметки")
-    print("13. Завершить программу")
+    print("12. Экспорт заметок в файл")
+    print("13. Удалить пользователя и его заметки")
+    print("14. Завершить программу")
 
 
 def select_action():
     try:
-        return int(input("Выберите действие (1-13): "))
+        return int(input("Выберите действие (1-14): "))
     except ValueError:
-        print("Пожалуйста, введите число от 1 до 13. ⚠️")
+        print("Пожалуйста, введите число от 1 до 14. ⚠️")
         return None
 
 
@@ -180,13 +181,23 @@ def main():
             status = input("Введите статус для поиска (или оставьте пустым): ")
             search_notes(session, keyword=keyword, status=status)
 
-        # Удаление пользователя и его заметок
+        # Экспорт заметок в файл
         elif choice == 12:
+            form = input("Введите формат выходного файла (txt или pdf): ")
+            while True:
+                output = export_notes_to_file(session, form)
+                if output:
+                    break
+                else:
+                    print("Некорректный формат экспорта. ⚠️ Выберите 'txt' или 'pdf'.")
+
+        # Удаление пользователя и его заметок
+        elif choice == 13:
             username = input("Введите имя пользователя: ")
             delete_user(session, username)
 
         # Завершение программы
-        elif choice == 13:
+        elif choice == 14:
             print("Программа завершена.")
             session.close()
             sys.exit()

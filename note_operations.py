@@ -1,6 +1,10 @@
 from sqlalchemy.exc import SQLAlchemyError
 from datetime import datetime
 from colorama import Fore
+from reportlab.lib.pagesizes import A4
+from reportlab.pdfgen import canvas
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 
 from utils.date_validator import compare_dates, format_date
 from utils.status import check_status, display_note_status
@@ -317,6 +321,81 @@ def filter_notes(current_session, filter_type: int, filter_value: str) -> list:
     else:
         print("Ошибка: Некорректный тип фильтра. ⚠️")
         return []
+
+
+def export_notes_to_file(current_session, export_format: str) -> bool | None:
+    """
+    Экспортирует все заметки в .txt или .pdf файл.
+    """
+    notes = current_session.query(Note).all()
+    if not notes:
+        print("Нет заметок для экспорта. ⚠️")
+        return
+
+    # В текстовый файл
+    if export_format.lower() == "txt":
+        try:
+            file_path = "notes_export.txt"
+            with open(file_path, "w", encoding="utf-8") as file:
+                for note in notes:
+                    file.write(f"Заголовок: {note.title}\n")
+                    file.write(f"Содержание: {note.content}\n")
+                    file.write(f"Статус: {note.status}\n")
+                    file.write(f"Дата создания: {note.created_date}\n")
+                    file.write(f"Дедлайн: {note.issue_date}\n")
+                    file.write("=" * 50 + "\n")
+            print(f"Заметки успешно экспортированы в {file_path} ✅")
+            return True
+
+        except Exception as e:
+            print(f"Ошибка при экспорте в TXT: {e} ❌")
+
+    # В pdf
+    elif export_format.lower() == "pdf":
+        file_path = "notes_export.pdf"
+        try:
+            pdf = canvas.Canvas(file_path, pagesize=A4)
+            width, height = A4
+            margin = 40
+            y_position = height - margin
+
+            # Заголовок документа
+            pdfmetrics.registerFont(TTFont('ArialBold', 'arialbd.ttf'))
+            pdf.setFont("ArialBold", 16)
+            pdf.drawString(margin, y_position, "Список заметок")
+            y_position -= 30
+
+            # Основной контент
+            pdfmetrics.registerFont(TTFont('Arial', 'arial.ttf'))
+            pdf.setFont("Arial", 12)
+            for note in notes:
+                if y_position < margin:
+                    pdf.showPage()
+                    y_position = height - margin
+
+                # Добавляем информацию о заметке
+                pdf.drawString(margin, y_position, f"Заголовок: {note.title}")
+                y_position -= 15
+                pdf.drawString(margin, y_position, f"Содержание: {note.content}")
+                y_position -= 15
+                pdf.drawString(margin, y_position, f"Статус: {note.status}")
+                y_position -= 15
+                pdf.drawString(margin, y_position, f"Комментарий: {note.comment}")
+                y_position -= 15
+                pdf.drawString(margin, y_position, f"Дата создания: {note.created_date}")
+                y_position -= 15
+                pdf.drawString(margin, y_position, f"Дата завершения: {note.issue_date}")
+                y_position -= 30
+
+            pdf.save()
+            print(f"Заметки успешно экспортированы в PDF: {file_path} ✅")
+            return True
+
+        except Exception as e:
+            print(f"Ошибка при экспорте в PDF: {e} ❌")
+
+    else:
+        return False
 
 
 def delete_note(current_session, username: str, note_name: str) -> None:
