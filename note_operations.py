@@ -1,3 +1,4 @@
+import os
 from sqlalchemy.exc import SQLAlchemyError
 from datetime import datetime
 from colorama import Fore
@@ -11,6 +12,7 @@ from utils.status import check_status, display_note_status
 from models.note import Note
 from models.user import User
 from user_operations import current_user_info
+from config import export_dir_path, export_path_txt, export_path_pdf
 
 
 def create_note(
@@ -332,11 +334,14 @@ def export_notes_to_file(current_session, export_format: str) -> bool | None:
         print("Нет заметок для экспорта. ⚠️")
         return
 
+    # Создаём директорию, если она не существует
+    if not os.path.exists(export_dir_path):
+        os.makedirs(export_dir_path)
+
     # В текстовый файл
     if export_format.lower() == "txt":
         try:
-            file_path = "../exports/notes_export.txt"
-            with open(file_path, "w", encoding="utf-8") as file:
+            with open(export_path_txt, "w", encoding="utf-8") as file:
                 for note in notes:
                     file.write(f"Заголовок: {note.title}\n")
                     file.write(f"Содержание: {note.content}\n")
@@ -344,7 +349,7 @@ def export_notes_to_file(current_session, export_format: str) -> bool | None:
                     file.write(f"Дата создания: {note.created_date}\n")
                     file.write(f"Дедлайн: {note.issue_date}\n")
                     file.write("=" * 50 + "\n")
-            print(f"Заметки успешно экспортированы в {file_path} ✅")
+            print(f"Заметки успешно экспортированы в {export_path_txt} ✅")
             return True
 
         except Exception as e:
@@ -352,9 +357,8 @@ def export_notes_to_file(current_session, export_format: str) -> bool | None:
 
     # В pdf
     elif export_format.lower() == "pdf":
-        file_path = "../exports/notes_export.pdf"
         try:
-            pdf = canvas.Canvas(file_path, pagesize=A4)
+            pdf = canvas.Canvas(export_path_pdf, pagesize=A4)
             width, height = A4
             margin = 40
             y_position = height - margin
@@ -388,7 +392,7 @@ def export_notes_to_file(current_session, export_format: str) -> bool | None:
                 y_position -= 30
 
             pdf.save()
-            print(f"Заметки успешно экспортированы в PDF: {file_path} ✅")
+            print(f"Заметки успешно экспортированы в PDF: {export_path_pdf} ✅")
             return True
 
         except Exception as e:
