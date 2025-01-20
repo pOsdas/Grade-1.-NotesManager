@@ -45,6 +45,7 @@ NotesManager — это приложение для управления зам�
 │   └── status.py               # Проверка и окраска статусов
 ├── .dockerignore               # Исключения для Docker
 ├── .gitignore                  # Исключения для Git
+├── config.py                   # Файл конфигурации
 ├── Dockerfile                  # Конфигурация Docker
 ├── LICENSE.txt                 # Лицензия проекта
 ├── main.py                     # Точка входа приложения
