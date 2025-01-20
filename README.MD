@@ -18,6 +18,8 @@ NotesManager — это приложение для управления зам�
 * datetime
 * typing_extensions
 * greenlet
+* colorama
+* reportlab
 
 ## Project structure
 
