@@ -15,7 +15,7 @@ from .additional_menu import filters_menu
 import sys
 from colorama import Fore, Style, init
 
-# инициализация
+# инициализация для colorama
 init(autoreset=True)
 
 
