@@ -1,8 +1,15 @@
+import os
 import unittest
 from datetime import datetime
 
-from note_operations import create_note, get_note, update_note_status, edit_note, delete_note
-from user_operations import create_user, delete_user, current_user_info, get_user_notes_titles
+from note_operations import (
+    create_note, get_notes, update_note_status,
+    edit_note, delete_note, export_notes_to_file,
+)
+from user_operations import (
+    create_user, delete_user,
+    current_user_info, get_user_notes_titles,
+)
 from utils.date_validator import format_date, give_time, compare_dates
 from utils.status import check_status
 from database.db import init_db, SessionLocal
@@ -48,7 +55,7 @@ class TestNoteOperations(BaseTest):
 
     def test_get_note_without_user(self):
         # Тест на получение заметок без пользователя
-        fetched_note = get_note(self.session, "test_user")
+        fetched_note = get_notes(self.session, "test_user")
         self.assertEqual(fetched_note, [])
 
     def test_create_note_with_user(self):
@@ -59,7 +66,7 @@ class TestNoteOperations(BaseTest):
 
     def test_get_note_with_user(self):
         # Тест на получение заметок с пользователем
-        fetched_note = get_note(self.session, "test_user")
+        fetched_note = get_notes(self.session, "test_user")
         self.assertNotEqual(fetched_note, [])
         delete_user(self.session, "test_user")
 
@@ -74,6 +81,29 @@ class TestNoteOperations(BaseTest):
         edit_note(self.session, "test_user")
         note = current_user_info(self.session, "test_user", "Test title")
         self.assertEqual(note.content, "something")
+
+    def test_export_notes_to_file_txt(self):
+        # Тест на сохранение заметок в .txt
+        create_user(self.session, "test_user")
+        for i in range(3):
+            create_note(self.session, "test_user", f"Test title{i}", "something", "В ожидании", self.issue_date)
+        output = export_notes_to_file(self.session, "txt")
+        self.assertTrue(output)
+        delete_user(self.session, "test_user")
+
+    def test_export_notes_to_file_pdf(self):
+        # Тест на сохранение заметок в .pdf
+        create_user(self.session, "test_user")
+        for i in range(3):
+            create_note(self.session, "test_user", f"Test title{i}", "something", "В ожидании", self.issue_date)
+        output = export_notes_to_file(self.session, "pdf")
+        self.assertTrue(output)
+        delete_user(self.session, "test_user")
+
+    def test_export_empty_notes_to_file(self):
+        # Тест на экспорт пустой базы данных
+        output = export_notes_to_file(self.session, "txt")
+        self.assertEqual(output, None)
 
     def test_delete_note(self):
         # Тест на удаление заметки
