@@ -2,9 +2,8 @@ from sqlalchemy.sql import text
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from models.note import Note
 
-DATABASE_URL = 'sqlite:///../notes_manager.db'
+DATABASE_URL = 'sqlite:///../notes_manager.db'  # на два уровня выше (осторожнее при изменении пути в config.py)
 
 engine = create_engine(DATABASE_URL, echo=True)
 SessionLocal = sessionmaker(
