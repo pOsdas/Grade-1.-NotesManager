@@ -90,26 +90,23 @@ def display_notes_paginated(current_session) -> str | None:
     Функция для постраничного отображения заметок.
     Каждая страница содержит до 3 заметок.
     """
-    notes = current_session.query(Note).all()
-
-    if not notes:
-        print("Нет заметок для отображения. ⚠️")
-        return
-
     page_size = 3  # Количество заметок на одной странице
     current_page = 0  # Индекс текущей страницы
 
+    total_notes = current_session.query(Note).count()
+    total_pages = (total_notes + page_size - 1) // page_size
+
+    if total_notes == 0:
+        print("Нет заметок для отображения. ⚠️")
+        return
+
     while True:
-        start_index = current_page * page_size
-        end_index = start_index + page_size
-        page_notes = notes[start_index:end_index]
+        # Используем limit и offset
+        offset = current_page * page_size
+        page_notes = current_session.query(Note).limit(page_size).offset(offset).all()
 
-        if not page_notes:
-            print("Страница пуста. ⚠️")
-            break
-
-        print(f"\n=== Страница {current_page + 1}/{(len(notes) + page_size - 1) // page_size} ===")
-        for index, note in enumerate(page_notes, start=start_index + 1):
+        print(f"\n=== Страница {current_page + 1}/{total_pages} ===")
+        for index, note in enumerate(page_notes, start=offset + 1):
             print(f"{index}. {note.title} — {display_note_status(note.status)} — {note.issue_date}")
 
         print("\n[N] — Следующая страница.")
@@ -119,7 +116,7 @@ def display_notes_paginated(current_session) -> str | None:
         choice = input("Выберите действие: ").strip().upper()
 
         if choice == "N":
-            if end_index >= len(notes):
+            if current_page + 1 >= total_pages:
                 print("Это последняя страница. ⚠️")
             else:
                 current_page += 1
